@@ -36,3 +36,5 @@ Set of useful helpers and wrappers around React Native for ClojureScript develop
                            ktoa/react-native-root
                            (.querySelector js/document "#app")))
 ```
+
+![Editing native and mobile](omnext.browser.mobile.gif)
