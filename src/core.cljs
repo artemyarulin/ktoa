@@ -2,7 +2,9 @@
 
 (def modules (when (exists? js/require)
                {:react-element (js/require "ReactElement")
+                :react (js/require "ReactNative")
                 :platform (js/require "Platform")
+                :registry (js/require "AppRegistry")
                 :view (js/require "View")
                 :text (js/require "Text")
                 :text-input (js/require "TextInput")}))
@@ -19,3 +21,8 @@
 (def view (partial element (:view modules)))
 (def text (partial element (:text modules)))
 (def text-input (partial element (:text-input modules)))
+
+(def register-component (aget (:registry modules) "registerComponent"))
+
+(defn class [m]
+  ((aget (:react modules) "createClass") (clj->js m)))
