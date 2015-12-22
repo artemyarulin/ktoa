@@ -22,22 +22,31 @@
 (def text (partial element (:text modules)))
 (def text-input (partial element (:text-input modules)))
 
-(def register-component (aget (:registry modules) "registerComponent"))
+(def register-component
+  (when-let [registry (:registry modules)]
+    (aget registry "registerComponent")))
 
-(defn register! [name mount]
-  (let [registered? (seq (.getAppKeys (:registry modules)))
-        root-tag 1]
-    (if registered?
-      (mount root-tag)
-      (.registerRunnable (:registry modules) #(mount (.rootTag %))))))
-
-(defn shim-react! []
-  (aset (aget (js/eval "goog") "global") "React" (js-obj "Component" (:react-element modules)
-                                                         "createElement" (.-createElement (:react-element modules)))))
+(defn register! [app-name mount node]
+  "If we have any app in registry - simply re-mount the app to the root node,
+   we need it for the REPL staff. If nothing exists yet - register in
+   a usual way. If we are in a browser - mount to the browser node"
+  (if react-native?
+    (if (seq (.getAppKeys (:registry modules)))
+      (mount react-native-root)
+      (.registerRunnable (:registry modules) app-name #(mount (aget % "rootTag"))))
+    (mount (node))))
 
 (def om-options
-  {:root-render (.-render (:react modules))
-   :root-unmount (.-unmountComponentAtNode (:react modules))})
+  (if react-native?
+    {:root-render (.-render (:react modules))
+     :root-unmount (.-unmountComponentAtNode (:react modules))}
+    {}))
 
 (defn class [m]
-  ((aget (:react modules) "createClass") (clj->js m)))
+  (when-let [react (:react modules)]
+    ((aget react "createClass") (clj->js m))))
+
+(when react-native?
+  (this-as self
+           (aset self "React" (js-obj "Component" (:react-element modules)
+                                      "createElement" (.-createElement (:react-element modules))))))
