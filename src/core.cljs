@@ -24,5 +24,20 @@
 
 (def register-component (aget (:registry modules) "registerComponent"))
 
+(defn register! [name mount]
+  (let [registered? (seq (.getAppKeys (:registry modules)))
+        root-tag 1]
+    (if registered?
+      (mount root-tag)
+      (.registerRunnable (:registry modules) #(mount (.rootTag %))))))
+
+(defn shim-react! []
+  (aset (aget (js/eval "goog") "global") "React" (js-obj "Component" (:react-element modules)
+                                                         "createElement" (.-createElement (:react-element modules)))))
+
+(def om-options
+  {:root-render (.-render (:react modules))
+   :root-unmount (.-unmountComponentAtNode (:react modules))})
+
 (defn class [m]
   ((aget (:react modules) "createClass") (clj->js m)))
