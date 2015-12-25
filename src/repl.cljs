@@ -1,7 +1,5 @@
 ;; Code looks a big ugly because it should work with advanced
-;; optimization. React packager somehow spoils goog.require plus I
-;; didn't want to use any externs to make it more interesting :)
-
+;; optimization. React packager somehow spoils goog.require
 ;; All credits to https://github.com/decker405/figwheel-react-native
 
 (ns ktoa.repl
