@@ -49,7 +49,7 @@ Then simply run `lein cljsbuild once repl && lein repl` and open your RN project
 
 ## Example
 
-See (om-next-cross-platform-template)[https://github.com/artemyarulin/om-next-cross-platform-template] for usage example
+See [om-next-cross-platform-template](https://github.com/artemyarulin/om-next-cross-platform-template) for usage example
 
 ## Status
 
