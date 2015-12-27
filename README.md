@@ -1,4 +1,4 @@
-# ktoa 
+# ktoa [![Downloads](https://jarkeeper.com/artemyarulin/ktoa/downloads.svg)](https://jarkeeper.com/artemyarulin/ktoa)
 [![Clojars Project](http://clojars.org/ktoa/latest-version.svg)](http://clojars.org/ktoa)
 
 Set of useful helpers and wrappers around React Native for ClojureScript development. Handy in case you want to write cross platform Om-Next components
