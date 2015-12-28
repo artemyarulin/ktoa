@@ -40,8 +40,7 @@
 
 (defn class [opt]
   "Creates React class"
-  (when-let [react (:react modules)]
-    (.createClass react (clj->js opt))))
+  (.createClass react-native (clj->js opt)))
 
 (def register-component
   "Register the component"

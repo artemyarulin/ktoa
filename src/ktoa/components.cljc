@@ -11,7 +11,7 @@
 
 #?(:clj
    (defmacro gen-wrappers [comps]
-     (let [wrap (fn[[name prop]] `(def ~(symbol name) (partial element (aget ~prop core/react-native))))]
+     (let [wrap (fn[[name prop]] `(def ~(symbol name) (partial element (aget core/react-native ~prop))))]
        `(do ~@(map wrap comps)))))
 
 #?(:cljs
