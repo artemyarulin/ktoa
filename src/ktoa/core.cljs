@@ -1,52 +1,49 @@
 (ns ktoa.core)
 
-(def modules (when (exists? js/require)
-               {:react-element (js/require "ReactElement")
-                :react (js/require "ReactNative")
-                :platform (js/require "Platform")
-                :registry (js/require "AppRegistry")
-                :view (js/require "View")
-                :text (js/require "Text")
-                :text-input (js/require "TextInput")}))
+(def react-native
+  "We cannot load react-native directly as react-packager has a
+  spechial handling of this. As for now we are using
+  figwhee-react-native with js eval which avoids packager we have to
+  load RN using this path. If we move to boot-react-native approach we
+  can remove it"
+  (when (exists? js/require)
+    (js/require "react-native/Libraries/react-native/react-native.js")))
 
-(defn element [element opts & children]
-  (apply (.-createElement (:react-element modules)) element (clj->js opts) children))
+(def react-native-root
+  "React gives root element index as a rootTag property when we
+  register componenet as registerRunnable. When we are in a
+  development mode and would like to remount our component we don't
+  have an access to rootTag, so we re-mount to the first index. Keep in
+  mind that if you have multipole RNRootView you may want to remount
+  to second, third, etc. indexes"
+  1)
 
-(def react-native-root 1) ;; Due some magic, RN root element has an index 1
-(def react-native? (some? (:react-element modules)))
-(def os (some-> modules :platform .-OS keyword))
-(def version (some-> modules :platform .-Version keyword))
+(def modules (when react-native
+               {:create-element (.-createElement react-native)
+                :platform (.-Platform react-native)
+                :registry (.-AppRegistry react-native)}))
 
-;; Components
-(def view (partial element (:view modules)))
-(def text (partial element (:text modules)))
-(def text-input (partial element (:text-input modules)))
-
-(def register-component
-  (when-let [registry (:registry modules)]
-    (aget registry "registerComponent")))
+(def os
+  "Returns nil for non react-native environments or :ios or :android
+  depending on current platform"
+  (some-> modules :platform .-OS keyword))
 
 (defn register! [app-name mount node]
-  "If we have any app in registry - simply re-mount the app to the root node,
-   we need it for the REPL staff. If nothing exists yet - register in
-   a usual way. If we are in a browser - mount to the browser node"
-  (if react-native?
+  "If we have any app in registry - simply re-mount the app to the
+   root node in order to reload it. If nothing exists yet - register
+   in a usual way. If we are in a browser - mount to the browser node"
+  (if react-native
     (if (seq (.getAppKeys (:registry modules)))
       (mount react-native-root)
       (.registerRunnable (:registry modules) app-name #(mount (aget % "rootTag"))))
     (mount (node))))
 
-(def om-options
-  (if react-native?
-    {:root-render (.-render (:react modules))
-     :root-unmount (.-unmountComponentAtNode (:react modules))}
-    {}))
-
-(defn class [m]
+(defn class [opt]
+  "Creates React class"
   (when-let [react (:react modules)]
-    ((aget react "createClass") (clj->js m))))
+    (.createClass react (clj->js opt))))
 
-(when react-native?
-  (this-as self
-           (aset self "React" (js-obj "Component" (:react-element modules)
-                                      "createElement" (.-createElement (:react-element modules))))))
+(def register-component
+  "Register the component"
+  (when-let [registry (:registry modules)]
+    (.-registerComponent registry)))

@@ -3,7 +3,8 @@
 ;; All credits to https://github.com/decker405/figwheel-react-native
 
 (ns ktoa.repl
-  (:require [ktoa.core :as ktoa]))
+  (:require [ktoa.core :as core]
+            [ktoa.components :as components]))
 
 (def config (atom {})) ;; too lazy to pass it as props to root component
 
@@ -36,16 +37,21 @@
              ["goog/deps.js", (fn[text]
                                 (js/eval text)
                                 (let [deps (atom [])
-                                      loader #(do (swap! deps conj %) true)
+                                      loader #(do (.log js/console "Loader called for: " %)
+                                                  (swap! deps conj %)
+                                                  true)
                                       req (js/eval "goog.require")
                                       goog (js/eval "goog")]
                                   ;; Standard way of extending Clousure with our own loader
                                   (aset (aget goog "global") "CLOSURE_IMPORT_SCRIPT" loader)
+                                  (.log js/console "Starting figwheel")
                                   (req "figwheel.connect")
+                                  (.log js/console (str "Starting namespace: " (:root-ns @config)))
                                   (req (:root-ns @config))
+                                  (.log js/console (str "Loading " (count @deps) " deps"))
                                   (download (map #(identity [(str "goog/" %) js/eval]) @deps))))]]))
 
-(def root-component (ktoa/class {:render #(ktoa/text {:onPress (fn[](start-figwheel))} "Start figwheel")
+(def root-component (core/class {:render #(components/text {:onPress (fn[](start-figwheel))} "Start figwheel")
                                  :componentWillMount #(start-figwheel)}))
 
 (defn start-repl [{:keys [app-name base-url root-ns]
@@ -54,4 +60,4 @@
                        :root-ns "app.core"}}]
   (.log js/console (str "Starting REPL for app:" app-name))
   (reset! config {:base-url base-url :root-ns root-ns})
-  (ktoa/register-component app-name (constantly root-component)))
+  (core/register-component app-name (constantly root-component)))
