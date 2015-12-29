@@ -3,9 +3,72 @@
 
 Set of useful helpers and wrappers around React Native for ClojureScript development. Handy in case you want to write cross platform Om-Next components
 
-## Features
+## API
 
-- Creates figwheel bridge file, no need to maintain any additional JS files in your repo. In your app create:
+#### ktoa.core
+
+- `react-native` - With fighweel-react-native approach we cannot simply do `require("react-navtie")` as react packager catches this import and convert module name to the full path. As we download new files and `eval` it by outselfs we avoid react packager. This variable requires `react-native` with a right path, abstracting this workaround for you. On non RN environments returns nil
+- `react-native-root` - React gives root element index as a rootTag property when we register componenet using AppRegistry.registerRunnable. When we are in a development mode and would like to remount our component we don't have an access to rootTag, so we re-mount to index 1 as React starts with it. Keep in mind that if you have multipole RNRootView you may want to remount to inxed 2,3, etc
+- `os` - Returns nil for non react-native environments or `:ios` or `:android` depending on current platform
+- `register!(app-name mount node)` - If we have any app in registry - simply re-mount the app to the root node in order to reload it. If nothing exists yet - register in a usual way. If we are in a browser - mount to the browser node. Example:
+``` clojure
+(ktoa/register! "AwesomeApp"                                        ;; App name, same as in your RCTRootView
+                #(om/add-root! (om/reconciler ktoa-om/om-options)   ;; Function which accept element to mount to
+                               RootComponent
+                               %)
+                #(.querySelector js/document "#app"))               ;; Optional, function which returns browser node to mount to. Only in case of cross platform development
+```
+- `class[property-map]` - Wrapper around `React.createClass`. Useful in case you are not using any frameworks like Om/Reagent/etc.
+- `register-component` - Wrapper around `AppRegistry.registerComponent`. Example:
+``` clojure
+(def root-component (core/class {:render #(components/text {:onPress (fn[](start-figwheel))} "Start figwheel")
+                                 :componentWillMount #(start-figwheel)}))
+(core/register-component app-name (constantly root-component))                                 
+```
+
+#### ktoa.components
+- `element[element opts & children]` - Helper for React Native component: Allows developer to use clojure maps as component options and add multiple children. Example:
+``` clojure
+(def style {:style {:flex 1
+                    :justifyContent "center"
+                    :alignItems "center"}})
+(view style
+        (switch nil nil)
+        (text nil "Hello"))
+```
+- This namespace currently exposes following wrapped with `element` React Native components: 
+    -  activity-indicator-ios
+    -  date-picker-ios
+    -  drawer-layout-android
+    -  image
+    -  list-view
+    -  map-view
+    -  modal
+    -  navigator
+    -  picker-ios
+    -  progress-bar-android
+    -  progress-view-ios
+    -  pull-to-refresh-view-android
+    -  scroll-view
+    -  segmented-control-ios
+    -  slider-ios
+    -  switch
+    -  tab-bar-ios
+    -  tab-bar-ios-item
+    -  text
+    -  text-input
+    -  toolbar-android
+    -  touchable-highlight
+    -  touchable-native-feedback
+    -  touchable-opacity
+    -  touchable-without-feedback
+    -  view
+    -  view-pager-android
+    -  web-view
+
+#### ktoa.repl
+
+Using this namespace you can create figwheel bridge file. In your app create:
 ``` clojure
 
 ;; cat src/repl/repl.cljs
@@ -39,13 +102,13 @@ Set of useful helpers and wrappers around React Native for ClojureScript develop
                                         :output-dir "resources/public/js"}}}})
 
 ```
-Then simply run `lein cljsbuild once repl && lein repl` and open your RN project. nrepl is supported as well                
+Then simply run `lein cljsbuild once repl && lein repl` and open your RN project. nrepl is supported as well
 
-- ReactNative AppRegistry magic is resolved - simply run `ktoa/register!`
-- om-next requires `React` global and certain props inside it - ktoa handles it automatically
-- `ktoa/om-options` returns map of required items in order to run Om-Next on RN. ktoa abstracts it for you
-- `ktoa/[view text text-input]` - component helpers
-- `ktoa/react-native?` - for writing cross-platform CLJS
+#### ktoa.om
+
+`om-options` - Om-Next reconciler accepts optional render and unmount function which has a different implementation in RN and browser React. In case non RN environments this function returns empty map so you can easiliy merge this options all the time
+
+`set-global!` - Om-Next using React global under the hood. Currently there is no way how we can configure it, so here we set minumum React version of this global
 
 ## Example
 
@@ -53,7 +116,9 @@ See [om-next-cross-platform-template](https://github.com/artemyarulin/om-next-cr
 
 ## Status
 
-Early development, experimenting with right lib design. Integrating it with my app. Although I'm using Om-Next ktoa should be framework agnostick - if something doesn't work for your favorite one or you with to extend this lib - PR are very welcome!
+Early development, experimenting with right lib design. Integrating it with my app. Although I'm using Om-Next ktoa should be framework agnostick - if something doesn't work for your favorite one or you with to extend this lib - PR are very welcome! 
+
+There are a lot of discussion happens in http://clojurians.net, on #cljsrn channel. Feel free to join
 
 # Credits
 
