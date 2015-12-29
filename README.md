@@ -23,7 +23,7 @@ Set of useful helpers and wrappers around React Native for ClojureScript develop
 ``` clojure
 (def root-component (core/class {:render #(components/text {:onPress (fn[](start-figwheel))} "Start figwheel")
                                  :componentWillMount #(start-figwheel)}))
-(core/register-component app-name (constantly root-component))                                 
+(core/register-component app-name (constantly root-component))
 ```
 
 #### ktoa.components
@@ -36,7 +36,7 @@ Set of useful helpers and wrappers around React Native for ClojureScript develop
         (switch nil nil)
         (text nil "Hello"))
 ```
-- This namespace currently exposes following wrapped with `element` React Native components: 
+- This namespace currently exposes following wrapped with `element` React Native components:
     -  activity-indicator-ios
     -  date-picker-ios
     -  drawer-layout-android
@@ -79,7 +79,7 @@ Using this namespace you can create figwheel bridge file. In your app create:
 (start-repl {:app-name "RootViewRN" ;; same as your RCTRootView using
              :base-url "http://localhost:3449/js"
              :root-ns  "app.core"})
-             
+
 ;; cat project.clj
 
 (defproject om-next-ios-pure "0.1.0"
@@ -87,7 +87,7 @@ Using this namespace you can create figwheel bridge file. In your app create:
                  [org.clojure/clojurescript "1.7.189"]
                  [figwheel-sidecar "0.5.0-SNAPSHOT"]
                  [com.cemerick/piggieback "0.2.1"]
-                 [ktoa "0.0.1-SNAPSHOT"]]
+                 [ktoa "0.0.2-SNAPSHOT"]]
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-figwheel "0.5.0-1"]]
   :source-paths ["src"]
@@ -116,7 +116,7 @@ See [om-next-cross-platform-template](https://github.com/artemyarulin/om-next-cr
 
 ## Status
 
-Early development, experimenting with right lib design. Integrating it with my app. Although I'm using Om-Next ktoa should be framework agnostick - if something doesn't work for your favorite one or you with to extend this lib - PR are very welcome! 
+Early development, experimenting with right lib design. Integrating it with my app. Although I'm using Om-Next ktoa should be framework agnostick - if something doesn't work for your favorite one or you with to extend this lib - PR are very welcome!
 
 There are a lot of discussion happens in http://clojurians.net, on #cljsrn channel. Feel free to join
 
