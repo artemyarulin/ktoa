@@ -1,21 +1,22 @@
 (ns ktoa.core)
 
 (def react-native
-  "We cannot load react-native directly as react-packager has a
-  spechial handling of this. As for now we are using
-  figwhee-react-native with js eval which avoids packager we have to
-  load RN using this path. If we move to boot-react-native approach we
-  can remove it"
+  "With fighweel-react-native approach we cannot simply do
+  `require('react-navtie')` as react packager catches this import and
+  convert module name to the full path. As we download new files and
+  `eval` it by outselfs we avoid react packager. This variable
+  requires `react-native` with a right path, abstracting this
+  workaround for you. On non RN environments returns nilt"
   (when (exists? js/require)
     (js/require "react-native/Libraries/react-native/react-native.js")))
 
 (def react-native-root
   "React gives root element index as a rootTag property when we
-  register componenet as registerRunnable. When we are in a
-  development mode and would like to remount our component we don't
-  have an access to rootTag, so we re-mount to the first index. Keep in
-  mind that if you have multipole RNRootView you may want to remount
-  to second, third, etc. indexes"
+  register componenet using AppRegistry.registerRunnable. When we are
+  in a development mode and would like to remount our component we
+  don't have an access to rootTag, so we re-mount to index 1 as React
+  starts with it. Keep in mind that if you have multipole RNRootView
+  you may want to remount to inxed 2,3, etc"
   1)
 
 (def modules (when react-native
