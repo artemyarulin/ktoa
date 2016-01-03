@@ -121,7 +121,7 @@ Add following line to your `project.clj`: `:figwheel {:ring-handler ktoa.state/h
 (persist app-state)
 
 ```
-That's it! As long as figwheel works state will sync between clients. How does it work? Whenever you change the atom, watcher handles it, calls handler, handler **appends string** to the file (that's why it's better to create a separate one) like `reset! app-state [new-shiny-state]`. Read more in the [ktoa.state](src/ktoa.state) and in [the issue](https://github.com/artemyarulin/ktoa/issues/2)
+That's it! As long as figwheel works state will sync between clients. How does it work? Whenever you change the atom, watcher handles it, calls handler, handler **appends string** to this file (that's why it's better to create a separate one) like `reset! app-state [new-shiny-state]`. Read more in the [ktoa.state](src/ktoa/state.cljc) and in [the issue](https://github.com/artemyarulin/ktoa/issues/2)
 
 ## Example
 
