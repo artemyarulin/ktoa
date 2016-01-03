@@ -87,7 +87,7 @@ Using this namespace you can create figwheel bridge file. In your app create:
                  [org.clojure/clojurescript "1.7.189"]
                  [figwheel-sidecar "0.5.0-SNAPSHOT"]
                  [com.cemerick/piggieback "0.2.1"]
-                 [ktoa "0.0.2-SNAPSHOT"]]
+                 [ktoa "0.1.0-SNAPSHOT"]]
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-figwheel "0.5.0-1"]]
   :source-paths ["src"]

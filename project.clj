@@ -1,4 +1,4 @@
-(defproject ktoa "0.0.2-SNAPSHOT"
+(defproject ktoa "0.1.0-SNAPSHOT"
   :description "Set of useful helpers and wrappers around React Native for ClojureScript development"
   :url "https://github.com/artemyarulin/ktoa"
   :license {:name "MIT License"
