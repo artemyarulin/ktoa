@@ -3,10 +3,12 @@
 ;; All credits to https://github.com/decker405/figwheel-react-native
 
 (ns ktoa.repl
-  (:require [ktoa.core :as core]
-            [ktoa.components :as components]))
+  #?(:cljs (:require [ktoa.core :as core]
+                     [ktoa.components :as components])))
 
-(def config (atom {})) ;; too lazy to pass it as props to root component
+#?(:cljs (do
+
+(def config (atom {}))
 
 (defn download [urls]
   (when (seq urls)
@@ -54,10 +56,17 @@
 (def root-component (core/class {:render #(components/text {:onPress (fn[](start-figwheel))} "Start figwheel")
                                  :componentWillMount #(start-figwheel)}))
 
-(defn start-repl [{:keys [app-name base-url root-ns]
-                  :or {:app-name "app"
-                       :base-url "http://localhost:3449/js"
-                       :root-ns "app.core"}}]
+(defn start [{:keys [app-name base-url root-ns modules req-modules]}]
   (.log js/console (str "Starting REPL for app:" app-name))
   (reset! config {:base-url base-url :root-ns root-ns})
-  (core/register-component app-name (constantly root-component)))
+  (let [deps (zipmap modules req-modules)
+        orig-req js/require]
+    (aset js/window "require" #(or (get deps %) (orig-req %))))
+  (core/register-component app-name (constantly root-component)))))
+
+#?(:clj
+   (defmacro start-repl [config]
+     (let [req (fn [n] `(js/require ~n))]
+       ;; As RN require is more like derective, rather than a function we have to call it from the global scope
+       `(do (def ~'required-modules (vector ~@(map req (:modules config))))
+            (repl/start (assoc ~config :req-modules ~'required-modules))))))
