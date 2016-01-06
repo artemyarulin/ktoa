@@ -79,7 +79,8 @@ Using this namespace you can create figwheel bridge file. In your app create:
 (start-repl {:app-name "RootViewRN" ;; same as your RCTRootView using
              :base-url "http://localhost:3449/js"
              :root-ns  "app.core"
-			 :modules ["react-native" "react-timer-mixin"]}) ;; If you wish to use require any external packages in your code - specify it here. See [#1](https://github.com/artemyarulin/ktoa/issues/1)
+			 ;; If you wish to require any external packages in your code - specify it here. See issue #1
+			 :modules ["react-native" "react-timer-mixin"]})
 
 ;; cat project.clj
 
