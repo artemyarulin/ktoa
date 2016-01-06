@@ -127,7 +127,7 @@ That's it! As long as figwheel works state will sync between clients. How does i
 
 ## Example
 
-See [om-next-cross-platform-template](https://github.com/artemyarulin/om-next-cross-platform-template) for usage example
+See [om-next-cross-platform-template](https://github.com/artemyarulin/om-next-cross-platform-template) for usage example. Another real example app which uses this lib is [kapteko-frontend](https://github.com/kapteko/kapteko-frontend)
 
 ## Status
 
