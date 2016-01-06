@@ -74,11 +74,12 @@ Using this namespace you can create figwheel bridge file. In your app create:
 ;; cat src/repl/repl.cljs
 
 (ns repl.repl
-  (:require [ktoa.repl :refer [start-repl]]))
+  (:require [ktoa.repl :as repl :refer-macros [start-repl]]))
 
 (start-repl {:app-name "RootViewRN" ;; same as your RCTRootView using
              :base-url "http://localhost:3449/js"
-             :root-ns  "app.core"})
+             :root-ns  "app.core"
+			 :modules ["react-native" "react-timer-mixin"]}) ;; If you wish to use require any external packages in your code - specify it here. See [#1](https://github.com/artemyarulin/ktoa/issues/1)
 
 ;; cat project.clj
 
@@ -87,7 +88,7 @@ Using this namespace you can create figwheel bridge file. In your app create:
                  [org.clojure/clojurescript "1.7.189"]
                  [figwheel-sidecar "0.5.0-SNAPSHOT"]
                  [com.cemerick/piggieback "0.2.1"]
-                 [ktoa "0.1.0-SNAPSHOT"]]
+                 [ktoa "0.1.2-SNAPSHOT"]]
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-figwheel "0.5.0-1"]]
   :source-paths ["src"]
