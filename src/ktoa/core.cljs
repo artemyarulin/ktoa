@@ -47,3 +47,6 @@
   "Register the component"
   (when-let [registry (:registry modules)]
     (.-registerComponent registry)))
+
+(when react-native
+  (set! js/React react-native))
