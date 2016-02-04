@@ -29,15 +29,18 @@
   depending on current platform"
   (some-> modules :platform .-OS keyword))
 
-(defn register! [app-name mount node]
+(defn register!
   "If we have any app in registry - simply re-mount the app to the
    root node in order to reload it. If nothing exists yet - register
    in a usual way. If we are in a browser - mount to the browser node"
-  (if react-native
-    (if (seq (.getAppKeys (:registry modules)))
-      (mount react-native-root)
-      (.registerRunnable (:registry modules) app-name #(mount (aget % "rootTag"))))
-    (mount (node))))
+  ([app-name mount]
+   (register! app-name mount #()))
+  ([app-name mount browser-node]
+   (if react-native
+     (if (seq (.getAppKeys (:registry modules)))
+       (mount react-native-root)
+       (.registerRunnable (:registry modules) app-name #(mount (aget % "rootTag"))))
+     (mount (browser-node)))))
 
 (defn class [opt]
   "Creates React class"
