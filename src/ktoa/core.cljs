@@ -49,4 +49,4 @@
     (.-registerComponent registry)))
 
 (when react-native
-  (set! js/React react-native))
+  (aset (aget (js/eval "goog") "global") "React" react-native))
