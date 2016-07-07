@@ -133,7 +133,7 @@ See [om-next-cross-platform-template](https://github.com/artemyarulin/om-next-cr
 
 Early development, experimenting with right lib design. Integrating it with my app. Although I'm using Om-Next ktoa should be framework agnostic - if something doesn't work for your favorite one or you with to extend this lib - PR are very welcome!
 
-There are a lot of discussion happens in http://clojurians.net, on #cljsrn channel. Feel free to join
+I'm thinking about splitting ktoa into several independend projects right now.
 
 # Credits
 
