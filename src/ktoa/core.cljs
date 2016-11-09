@@ -46,3 +46,12 @@
   "Register the component"
   (when-let [registry (:registry modules)]
     (.-registerComponent registry)))
+
+(defn run-app! [app-name props]
+  (when-let [registry (:registry modules)]
+    (.runApplication registry app-name (clj->js {:rootTag 1
+                                                 :initialProps props}))))
+
+(defn run-component! [app-name component props]
+  (register-component app-name component)
+  (run-app! app-name props))

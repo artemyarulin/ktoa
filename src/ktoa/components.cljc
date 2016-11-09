@@ -7,7 +7,13 @@
      "Helper for React Native component: Allows developer to use
       clojure maps as component options and add multiple
       children"
-     (apply (.-createElement core/react) element (clj->js opts) children)))
+     (apply (.-createElement core/react) element (clj->js opts) (clj->js children))))
+
+#?(:cljs
+   (defn component [opts]
+     (fn
+       ([] (core/class opts))
+       ([props & children] (element (core/class opts) props children)))))
 
 #?(:clj
    (defmacro gen-wrappers [comps]
