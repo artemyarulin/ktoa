@@ -53,16 +53,20 @@
                                   (.log js/console (str "Loading " (count @deps) " deps"))
                                   (download (map #(identity [(str "goog/" %) js/eval]) @deps))))]]))
 
-(def root-component (core/class {:render #(components/text {:onPress (fn[](start-figwheel))} "Start figwheel")
-                                 :componentWillMount #(start-figwheel)}))
+(defn root-component []
+  (components/class {:render #(components/text {:onPress (fn[](start-figwheel))} "Start figwheel")
+                     :componentWillMount #(start-figwheel)}))
 
 (defn start [{:keys [app-name base-url root-ns modules req-modules]}]
-  (.log js/console (str "Starting REPL for app:" app-name))
-  (reset! config {:base-url base-url :root-ns root-ns})
-  (let [deps (zipmap modules req-modules)
-        orig-req js/require]
-    (aset js/window "require" #(or (get deps %) (orig-req %))))
-  (core/register-component app-name (constantly root-component)))))
+  (if-not (core/app-registered? app-name)
+    (do
+      (.log js/console (str "Starting REPL for app " app-name))
+      (reset! config {:base-url base-url :root-ns root-ns})
+      (let [deps (zipmap modules req-modules)
+            orig-req js/require]
+        (aset js/window "require" #(or (get deps %) (orig-req %))))
+      (core/run-app! app-name root-component))
+    (.log js/console (str "App with same name already registered. Check your config" app-name))))))
 
 #?(:clj
    (defmacro start-repl [config]
