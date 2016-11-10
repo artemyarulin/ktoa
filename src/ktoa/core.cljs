@@ -8,15 +8,6 @@
   (when (exists? js/require)
     (js/require "react")))
 
-(def react-native-root
-  "React gives root element index as a rootTag property when we
-  register componenet using AppRegistry.registerRunnable. When we are
-  in a development mode and would like to remount our component we
-  don't have an access to rootTag, so we re-mount to index 1 as React
-  starts with it. Keep in mind that if you have multipole RNRootView
-  you may want to remount to inxed 2,3, etc"
-  1)
-
 (def modules
   (when react-native
     {:create-element (.-createElement react)
@@ -28,30 +19,20 @@
   depending on current platform"
   (some-> modules :platform .-OS keyword))
 
-(defn register! [app-name mount node]
-  "If we have any app in registry - simply re-mount the app to the
-   root node in order to reload it. If nothing exists yet - register
-   in a usual way. If we are in a browser - mount to the browser node"
-  (if react-native
-    (if (seq (.getAppKeys (:registry modules)))
-      (mount react-native-root)
-      (.registerRunnable (:registry modules) app-name #(mount (aget % "rootTag"))))
-    (mount (node))))
+(defn app-registered? [name]
+  (-> (:registry modules)
+      .getAppKeys
+      (.indexOf name)
+      (not= -1)))
 
-(defn class [opt]
-  "Creates React class"
-  (.createClass react (clj->js opt)))
-
-(def register-component
-  "Register the component"
-  (when-let [registry (:registry modules)]
-    (.-registerComponent registry)))
-
-(defn run-app! [app-name props]
-  (when-let [registry (:registry modules)]
-    (.runApplication registry app-name (clj->js {:rootTag 1
-                                                 :initialProps props}))))
-
-(defn run-component! [app-name component props]
-  (register-component app-name component)
-  (run-app! app-name props))
+(defn run-app!
+  "May be called multiple times - if application already
+  registerd (like during REPL session) it will restart application
+  again with (optional) props"
+  ([name comp] (run-app! name comp {}))
+  ([name comp override-props]
+   (let [registry (:registry modules)
+         registered? (app-registered? name)]
+     (.registerComponent registry name comp)
+     (when registered?
+       (.runApplication registry name (clj->js {:rootTag 1 :initialProps override-props}))))))

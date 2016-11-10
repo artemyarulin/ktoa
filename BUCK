@@ -1,3 +1,5 @@
 cljs_module(name='ktoa',
-            src = glob(['src/**/*']),
+            src = ['src/ktoa/core.cljs',
+                   'src/ktoa/components.cljc',
+                   'src/ktoa/repl.cljc'],
             modules='//lib/react-native/react-native-externs:react-native-externs')
