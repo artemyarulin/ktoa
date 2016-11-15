@@ -48,7 +48,11 @@
          "touchable-without-feedback" "TouchableWithoutFeedback"
          "view" "View"
          "view-pager-android" "ViewPagerAndroid"
-         "web-view" "WebView"}))))
+         "web-view" "WebView"}))
+
+     (defn list-view-ds []
+       (let [ds (aget core/react-native "ListView" "DataSource")]
+         (ds. #js {:rowHasChanged not=})))))
 
 #?(:clj
    (defmacro gen-wrappers [comps]
