@@ -1,10 +1,10 @@
 (ns ktoa.core)
 
-(def react-native
+(defonce react-native
   (when (exists? js/require)
     (js/require "react-native")))
 
-(def react
+(defonce react
   (when (exists? js/require)
     (js/require "react")))
 
@@ -12,7 +12,8 @@
   (when react-native
     {:create-element (.-createElement react)
      :platform (.-Platform react-native)
-     :registry (.-AppRegistry react-native)}))
+     :registry (.-AppRegistry react-native)
+     :dimensions (.-Dimensions react-native)}))
 
 (def os
   "Returns nil for non react-native environments or :ios or :android
